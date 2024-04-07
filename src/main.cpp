@@ -9,9 +9,11 @@
  */
 
 #include "curve.h"
+#include "surface.h"
 
 int main(int, char* [])
 {
-    Test_TessllateCurve();
+    //Test_TessllateCurve();
+    Test_TessllateSurface();
     return 0;
 }
