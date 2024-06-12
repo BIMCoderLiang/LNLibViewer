@@ -1,4 +1,5 @@
 # Prerequisites
+build/
 *.d
 
 # Compiled Object files
@@ -14,7 +15,6 @@
 # Compiled Dynamic libraries
 *.so
 *.dylib
-*.dll
 
 # Fortran module files
 *.mod
@@ -24,7 +24,6 @@
 *.lai
 *.la
 *.a
-*.lib
 
 build
 
