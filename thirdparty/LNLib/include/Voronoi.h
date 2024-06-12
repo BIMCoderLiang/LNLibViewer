@@ -32,8 +32,7 @@ email: shaneosullivan1@gmail.com
 
 #pragma once
 
-#include <math.h>
-#include <stdlib.h>
+#include <cmath>
 #include <vector>
 #include "LNLibDefinitions.h"
 

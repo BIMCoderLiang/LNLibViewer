@@ -21,6 +21,13 @@ namespace LNLib
 
 	public:
 
+		/// <summary>
+		/// According to https://referencesource.microsoft.com/#windowsbase/Shared/MS/Internal/DoubleUtil.cs,73bdd52106b3a9e3,references
+		/// 
+		/// Notice that Google Gtest EXPECT_NEAR is more restrict:
+		/// https://github.com/google/googletest/blob/fa6de7f4382f5c8fb8b9e32eea28a2eb44966c32/googletest/include/gtest/gtest.h#L2001
+		/// https://github.com/google/googletest/blob/fa6de7f4382f5c8fb8b9e32eea28a2eb44966c32/googletest/src/gtest.cc#L1661
+		/// </summary>
 		static bool IsAlmostEqualTo(double value1, double value2, double tolerance = Constants::DoubleEpsilon);
 
 		static bool IsGreaterThan(double value1, double value2, double tolerance = Constants::DoubleEpsilon);
@@ -83,15 +90,9 @@ namespace LNLib
 		
 		static std::vector<std::vector<double>> CreateMatrix(int row, int column);
 
-		static bool IsSquareMatrix(const std::vector<std::vector<double>>& matrix);
-
-		static double GetDeterminant(const std::vector<std::vector<double>>& matrix, int dimension);
+		static double GetDeterminant(const std::vector<std::vector<double>>& matrix);
 
 		static bool MakeInverse(const std::vector<std::vector<double>>& matrix, std::vector<std::vector<double>>& inverse);
-
-		static bool LUDecomposition(const std::vector<std::vector<double>>& matrix, std::vector<std::vector<double>>& lowerTriMatrix, std::vector<std::vector<double>>& upperTriMatrix);
-		
-		static bool LUPDecomposition(const std::vector<std::vector<double>>& matrix, std::vector<std::vector<double>>& lowerTriMatrix, std::vector<std::vector<double>>& upperTriMatrix, std::vector<double>& pivot);
 
 		/// <summary>
 		/// matrix * result = right.

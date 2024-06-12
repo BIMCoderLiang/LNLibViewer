@@ -17,18 +17,73 @@
 #include "NurbsSurface.h"
 
 #include <vtkNew.h>
+#include <vtkAssembly.h>
+#include <vtkAssemblyPath.h>
+#include <vtkAxesActor.h>
+#include <vtkCallbackCommand.h>
+#include <vtkCommand.h>
+#include <vtkFollower.h>
 #include <vtkTriangle.h>
 #include <vtkPolyData.h>
 #include <vtkPolyDataMapper.h>
 #include <vtkPolygon.h>
 #include <vtkActor.h>
 #include <vtkProperty.h>
+#include <vtkVectorText.h>
 #include <vtkRenderer.h>
+#include <vtkInteractorStyleTrackballActor.h>
 #include <vtkRenderWindow.h>
 #include <vtkRenderWindowInteractor.h>
 #include <vtkAutoInit.h>
 VTK_MODULE_INIT(vtkRenderingOpenGL2)
 using namespace LNLib;
+
+namespace {
+	//----------------------------------------------------------------------------
+	class vtkPositionCallback : public vtkCallbackCommand
+	{
+	public:
+		static vtkPositionCallback* New()
+		{
+			return new vtkPositionCallback;
+		}
+
+		void Execute(vtkObject* vtkNotUsed(caller), unsigned long vtkNotUsed(event),
+			void* vtkNotUsed(callData))
+		{
+			this->Axes->InitPathTraversal();
+			vtkAssemblyPath* path = 0;
+			int count = 0;
+			vtkFollower* followers[3] = { this->XLabel, this->YLabel, this->ZLabel };
+			int followerId = 0;
+			while ((path = this->Axes->GetNextPath()) != NULL)
+			{
+				if (count++ > 2)
+				{
+					vtkProp3D* prop3D =
+						static_cast<vtkProp3D*>(path->GetLastNode()->GetViewProp());
+					if (prop3D)
+					{
+						prop3D->PokeMatrix(path->GetLastNode()->GetMatrix());
+						followers[followerId]->SetPosition(prop3D->GetCenter());
+						followerId++;
+						prop3D->PokeMatrix(NULL);
+					}
+				}
+			}
+		}
+
+		vtkPositionCallback() : XLabel(0), YLabel(0), ZLabel(0), Axes(0)
+		{
+		}
+
+		vtkFollower* XLabel;
+		vtkFollower* YLabel;
+		vtkFollower* ZLabel;
+		vtkAssembly* Axes;
+	};
+
+} // namespace
 
 void Test_TessllateSurface()
 {
@@ -87,26 +142,23 @@ void Test_TessllateSurface()
 	surface.KnotVectorV = kvV;
 	surface.ControlPoints = controlPoints;
 
-	LNLib::LN_Mesh mesh = NurbsSurface::Tessellate(surface);
+	LNLib::LN_Mesh mesh = NurbsSurface::Triangulate(surface);
 	std::vector<std::vector<int>> faces = mesh.Faces;
 	std::vector<XYZ> vertices = mesh.Vertices;
 
 	// Setup three points
-	vtkSmartPointer<vtkPoints> points =
-		vtkSmartPointer<vtkPoints>::New();
+	vtkSmartPointer<vtkPoints> points = vtkSmartPointer<vtkPoints>::New();
 	for (int i = 0; i < vertices.size(); i++)
 	{
 		points->InsertNextPoint(vertices[i][0], vertices[i][1], vertices[i][2]);
 	}
 
 	// Add the polygon to a list of polygons
-	vtkSmartPointer<vtkCellArray> triangles =
-		vtkSmartPointer<vtkCellArray>::New();
+	vtkSmartPointer<vtkCellArray> triangles = vtkSmartPointer<vtkCellArray>::New();
 	for (int i = 0; i < faces.size(); i++)
 	{
 		// Create the triangle
-		vtkSmartPointer<vtkTriangle> triangle =
-			vtkSmartPointer<vtkTriangle>::New();
+		vtkSmartPointer<vtkTriangle> triangle = vtkSmartPointer<vtkTriangle>::New();
 
 		triangle->GetPointIds()->SetId(0, faces[i][0]);
 		triangle->GetPointIds()->SetId(1, faces[i][1]);
@@ -116,18 +168,15 @@ void Test_TessllateSurface()
 	}
 
 	// Create a PolyData
-	vtkSmartPointer<vtkPolyData> polygonPolyData =
-		vtkSmartPointer<vtkPolyData>::New();
+	vtkSmartPointer<vtkPolyData> polygonPolyData = vtkSmartPointer<vtkPolyData>::New();
 	polygonPolyData->SetPoints(points);
 	polygonPolyData->SetPolys(triangles);
 
 	// Create a mapper and actor
-	vtkSmartPointer<vtkPolyDataMapper> mapper =
-		vtkSmartPointer<vtkPolyDataMapper>::New();
+	vtkSmartPointer<vtkPolyDataMapper> mapper = vtkSmartPointer<vtkPolyDataMapper>::New();
 	mapper->SetInputData(polygonPolyData);
 
-	vtkSmartPointer<vtkActor> actor =
-		vtkSmartPointer<vtkActor>::New();
+	vtkSmartPointer<vtkActor> actor = vtkSmartPointer<vtkActor>::New();
 	actor->SetMapper(mapper);
 	double r = 255.0 / 255.0;
 	double g = 0.0 / 255.0;
@@ -135,18 +184,90 @@ void Test_TessllateSurface()
 	actor->GetProperty()->SetColor(r, g, b);
 
 	// Visualize
-	vtkSmartPointer<vtkRenderer> renderer =
-		vtkSmartPointer<vtkRenderer>::New();
-	vtkSmartPointer<vtkRenderWindow> renderWindow =
-		vtkSmartPointer<vtkRenderWindow>::New();
-	renderWindow->SetWindowName("Polygon");
+	vtkSmartPointer<vtkRenderer> renderer = vtkSmartPointer<vtkRenderer>::New();
+	vtkSmartPointer<vtkRenderWindow> renderWindow =	vtkSmartPointer<vtkRenderWindow>::New();
+	renderWindow->SetWindowName("Tessellate Surface");
 	renderWindow->AddRenderer(renderer);
-	vtkSmartPointer<vtkRenderWindowInteractor> renderWindowInteractor =
-		vtkSmartPointer<vtkRenderWindowInteractor>::New();
+	vtkSmartPointer<vtkRenderWindowInteractor> renderWindowInteractor = vtkSmartPointer<vtkRenderWindowInteractor>::New();
 	renderWindowInteractor->SetRenderWindow(renderWindow);
-
 	renderer->AddActor(actor);
 	renderer->SetBackground(0, 0, 0);
+
+	// vtkAxesActor is currently not designed to work with
+	// vtkInteractorStyleTrackballActor since it is a hybrid object containing
+	// both vtkProp3D's and vtkActor2D's, the latter of which does not have a 3D
+	// position that can be manipulated.
+	vtkNew<vtkAxesActor> axes;
+
+	// Get a copy of the axes' constituent 3D actors and put them into a
+	// vtkAssembly so they can be manipulated as one prop.
+	vtkNew<vtkPropCollection> collection;
+	axes->GetActors(collection);
+
+	collection->InitTraversal();
+
+	vtkNew<vtkAssembly> movableAxes;
+
+	for (int i = 0; i < collection->GetNumberOfItems(); ++i)
+	{
+		movableAxes->AddPart((vtkProp3D*)collection->GetNextProp());
+	}
+
+	renderer->AddActor(movableAxes);
+
+	// Create our own labels that will follow and face the camera.
+	vtkNew<vtkFollower> xLabel;
+	vtkNew<vtkVectorText> xText;
+	vtkNew<vtkPolyDataMapper> xTextMapper;
+	xText->SetText("X");
+	xTextMapper->SetInputConnection(xText->GetOutputPort());
+	xLabel->SetMapper(xTextMapper);
+	xLabel->SetScale(0.3);
+	xLabel->SetCamera(renderer->GetActiveCamera());
+	xLabel->SetPosition(
+		((vtkProp3D*)collection->GetItemAsObject(3))->GetCenter()); // XAxisTip
+	xLabel->PickableOff();
+	renderer->AddActor(xLabel);
+
+	vtkNew<vtkFollower> yLabel;
+	vtkNew<vtkVectorText> yText;
+	vtkNew<vtkPolyDataMapper> yTextMapper;
+	yText->SetText("Y");
+	yTextMapper->SetInputConnection(yText->GetOutputPort());
+	yLabel->SetMapper(yTextMapper);
+	yLabel->SetScale(0.3);
+	yLabel->SetCamera(renderer->GetActiveCamera());
+	yLabel->SetPosition(
+		((vtkProp3D*)collection->GetItemAsObject(4))->GetCenter()); // YAxisTip
+	yLabel->PickableOff();
+	renderer->AddActor(yLabel);
+
+	vtkNew<vtkFollower> zLabel;
+	vtkNew<vtkVectorText> zText;
+	vtkNew<vtkPolyDataMapper> zTextMapper;
+	zText->SetText("Z");
+	zTextMapper->SetInputConnection(zText->GetOutputPort());
+	zLabel->SetMapper(zTextMapper);
+	zLabel->SetScale(0.3);
+	zLabel->SetCamera(renderer->GetActiveCamera());
+	zLabel->SetPosition(
+		((vtkProp3D*)collection->GetItemAsObject(5))->GetCenter()); // ZAxisTip
+	zLabel->PickableOff();
+	renderer->AddActor(zLabel);
+
+	// Custom callback to set the positions of the labels.
+	vtkNew<vtkPositionCallback> callback;
+	callback->XLabel = xLabel;
+	callback->YLabel = yLabel;
+	callback->ZLabel = zLabel;
+	callback->Axes = movableAxes;
+
+	renderer->ResetCamera();
 	renderWindow->Render();
+
+	vtkNew<vtkInteractorStyleTrackballActor> style;
+	renderWindowInteractor->SetInteractorStyle(style);
+	style->AddObserver(vtkCommand::InteractionEvent, callback);
+
 	renderWindowInteractor->Start();
 }

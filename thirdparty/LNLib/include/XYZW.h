@@ -11,7 +11,7 @@
 #pragma once
 #include "LNLibDefinitions.h"
 #include "XYZ.h"
-#include <math.h>
+#include <cmath>
 
 namespace LNLib
 {
@@ -47,7 +47,7 @@ namespace LNLib
 
 	public:
 
-		XYZ ToXYZ(bool divideWeight);
+		XYZ ToXYZ(bool divideWeight)const;
 		bool IsAlmostEqualTo(const XYZW& another) const;
 		double Distance(const XYZW& another) const;
 

@@ -13,19 +13,11 @@
 #include "LNLibDefinitions.h"
 #include "MathUtils.h"
 #include <vector>
-#include <unordered_map>
+#include <map>
 
 namespace LNLib
 {
 	class UV;
-
-	struct CustomDoubleEqual
-	{
-		bool operator()(const double& d1, const double& d2) const
-		{
-			return MathUtils::IsAlmostEqualTo(d1, d2);
-		}
-	};
 
 	class LNLIB_EXPORT KnotVectorUtils
 	{
@@ -49,12 +41,12 @@ namespace LNLib
 		/// The NURBS Book 2nd Edition Page338
 		/// Get knot multiplcity map.
 		/// </summary>
-		static std::unordered_map<double, int, std::hash<double>, CustomDoubleEqual> GetKnotMultiplicityMap(const std::vector<double>& knotVector);
+		static std::map<double, int> GetKnotMultiplicityMap(const std::vector<double>& knotVector);
 
 		/// <summary>
 		/// Get internal knot multiplcity map.
 		/// </summary>
-		static std::unordered_map<double, int, std::hash<double>, CustomDoubleEqual> GetInternalKnotMultiplicityMap(const std::vector<double>& knotVector);
+		static std::map<double, int> GetInternalKnotMultiplicityMap(const std::vector<double>& knotVector);
 
 		/// <summary>
 		/// The NURBS Book 2nd Edition Page338
@@ -67,6 +59,13 @@ namespace LNLib
 		/// Get insert elements between knot vectors for create sweep surface.
 		/// </summary>
 		static std::vector<std::vector<double>> GetInsertedKnotElements(const std::vector<std::vector<double>>& knotVectors);
+
+		/// <summary>
+		/// The NURBS Book 2nd Edition Page476
+		/// Insert [insertKnotsNumber] knots into [knotVector] 
+		/// by insert at the midpoint of the longest span will do.
+		/// </summary>
+		static std::vector<double> GetInsertedKnotElements(int insertKnotsNumber, const std::vector<double>& knotVector);
 
 		/// <summary>
 		/// The NURBS Book 2nd Edition Page572

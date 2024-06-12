@@ -40,19 +40,19 @@ namespace LNLib
 		/// <summary>
 		/// The NURBS Book 2nd Edition Page127
 		/// Algorithm A4.2
-		/// Compute C(paramT) derivatives from Cw(paramT) deraivatives.
+		/// Compute C(paramT) derivatives from Cw(paramT) derivatives.
 		/// </summary>
 		static std::vector<XYZ> ComputeRationalCurveDerivatives(const LN_NurbsCurve& curve, int derivative, double paramT);
+
+		/// <summary>
+		/// Computer left and right hand derivatives.
+		/// </summary>
+		static bool CanComputerDerivative(const LN_NurbsCurve& curve, double paramT);
 
 		/// <summary>
 		/// Calculate curve curvature.
 		/// </summary>
 		static double Curvature(const LN_NurbsCurve& curve, double paramT);
-
-		/// <summary>
-		/// Calculate curve normal direction.
-		/// </summary>
-		static XYZ Normal(const LN_NurbsCurve& curve, CurveNormal normalType, double paramT);
 
 		/// <summary>
 		/// Calculate curve torsion.
@@ -157,6 +157,11 @@ namespace LNLib
 		static bool SplitAt(const LN_NurbsCurve& curve, double parameter, LN_NurbsCurve& left, LN_NurbsCurve& right);
 
 		/// <summary>
+		/// Segment curve.
+		/// </summary>
+		static bool Segment(const LN_NurbsCurve& curve, double startParameter, double endParameter, LN_NurbsCurve& segment);
+
+		/// <summary>
 		/// Merge two connected curves to one curve.
 		/// </summary>
 		static bool Merge(const LN_NurbsCurve& left, const LN_NurbsCurve& right, LN_NurbsCurve& result);
@@ -170,6 +175,12 @@ namespace LNLib
 		/// Create line represented by NURBS.
 		/// </summary>
 		static void CreateLine(const XYZ& start, const XYZ& end, LN_NurbsCurve& result);
+
+		/// <summary>
+		/// The SISL Reference Manual v4.4 Page30 s1379
+		/// Create cubic hermite spline by interpolation.
+		/// </summary>
+		static void CreateCubicHermite(const std::vector<XYZ>& throughPoints, const std::vector<XYZ>& tangents, LN_NurbsCurve& curve);
 
 		/// <summary>
 		/// The NURBS Book 2nd Edition Page308
@@ -194,7 +205,7 @@ namespace LNLib
 		/// <summary>
 		/// The NURBS Book 2nd Edition Page317
 		/// Algorithm A7.3
-		/// Construct open conic arc.
+		/// Create open conic arc.
 		/// </summary>
 		static bool CreateOpenConic(const XYZ& start, const XYZ& startTangent, const XYZ& end, const XYZ& endTangent, const XYZ& pointOnConic, LN_NurbsCurve& curve);
 
@@ -228,7 +239,7 @@ namespace LNLib
 		/// Algorithm A9.6
 		/// Weighted and contrained least squares approximation.
 		/// </summary>
-		static bool WeightedAndContrainedLeastSquaresApproximation(int degree, const std::vector<XYZ>& throughPoints, const std::vector<double>& weights, const std::vector<XYZ>& tangents, const std::vector<int>& tangentIndices, const std::vector<double>& weightedTangents, int controlPointsCount, LN_NurbsCurve& curve);
+		static bool WeightedAndContrainedLeastSquaresApproximation(int degree, const std::vector<XYZ>& throughPoints, const std::vector<double>& throughPointWeights, const std::vector<XYZ>& tangents, const std::vector<int>& tangentIndices, const std::vector<double>& tangentWeights, int controlPointsCount, LN_NurbsCurve& curve);
 
 		/// <summary>
 		/// The NURBS Book 2nd Edition Page428
@@ -264,6 +275,18 @@ namespace LNLib
 		/// Fit to tolerance with cubic segment.
 		/// </summary>
 		static bool FitWithCubic(const std::vector<XYZ>& throughPoints, int startPointIndex, int endPointIndex, const XYZ& startTangent, const XYZ& endTangent, double maxError, std::vector<XYZW>& middleControlPoints);
+
+		/// <summary>
+		/// The NURBS Book 2nd Edition Page479
+		/// Calculate curve normal direction.
+		/// </summary>
+		static XYZ Normal(const LN_NurbsCurve& curve, CurveNormal normalType, double paramT);
+
+		/// <summary>
+		/// The NURBS Book 2nd Edition Page481
+		/// Projection normal method invented by Siltanen and Woodward.
+		/// </summary>
+		static std::vector<XYZ> ProjectNormal(const LN_NurbsCurve& curve);
 
 		/// <summary>
 		/// The NURBS Book 2nd Edition Page511
@@ -336,26 +359,22 @@ namespace LNLib
 		/// <summary>
 		/// Detemine curve whether is arc.
 		/// </summary>
-		static bool IsArc(const LN_NurbsCurve& curve);
+		static bool IsArc(const LN_NurbsCurve& curve, LN_ArcInfo& arcInfo);
 
 		/// <summary>
 		/// Calculate curve arc length.
-		/// 
-		/// Use Simpson integration for low accuracy.
-		/// Use Gauss-Legendre integration for medium accuracy.
-		/// Use Chebyshev integration for high accuracy.
 		/// </summary>
-		static double ApproximateLength(const LN_NurbsCurve& curve, IntegratorType type = IntegratorType::Chebyshev);
+		static double ApproximateLength(const LN_NurbsCurve& curve, IntegratorType type = IntegratorType::GaussLegendre);
 
 		/// <summary>
 		/// Calculate parameter makes first segment length equals to given length.
 		/// </summary>
-		static double GetParamOnCurve(const LN_NurbsCurve& curve, double givenLength, IntegratorType type = IntegratorType::Chebyshev);
+		static double GetParamOnCurve(const LN_NurbsCurve& curve, double givenLength, IntegratorType type = IntegratorType::GaussLegendre);
 
 		/// <summary>
-		/// Calculate parameters makes every segments length equal to given length.
+		/// Calculate parameters makes every segments length equals to given length.
 		/// </summary>
-		static std::vector<double> GetParamsOnCurve(const LN_NurbsCurve& curve, double givenLength, IntegratorType type = IntegratorType::Chebyshev);
+		static std::vector<double> GetParamsOnCurve(const LN_NurbsCurve& curve, double givenLength, IntegratorType type = IntegratorType::GaussLegendre);
 
 		/// <summary>
 		/// Tessellate nurbs curve.

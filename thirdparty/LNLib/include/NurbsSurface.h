@@ -39,6 +39,11 @@ namespace LNLib
 		/// </summary>
 		static std::vector<std::vector<XYZ>> ComputeRationalSurfaceDerivatives(const LN_NurbsSurface& surface, int derivative, UV uv);
 
+		/// <summary>
+		/// This is an optimized function of ComputeRationalSurfaceDerivatives, for order 1 case.
+		/// </summary>
+		static void ComputeRationalSurfaceFirstOrderDerivative(const LN_NurbsSurface& surface, UV uv, XYZ& S, XYZ& Su, XYZ& Sv);
+
 		static double Curvature(const LN_NurbsSurface& surface, SurfaceCurvature curvature, UV uv);
 
 		static XYZ Normal(const LN_NurbsSurface& surface, UV uv);
@@ -123,10 +128,15 @@ namespace LNLib
 		
 		/// <summary>
 		/// The NURBS Book 2nd Edition Page334
-		/// construct a NURBS surface by four counter-clockwise points.
-		/// point1,point2,point3,point4 are anti-clock placement.
+		/// Create a bilinear surface.
+		/// 
+		/// ------- v direction
+		/// |
+		/// |
+		/// u direction
+		///   
 		/// </summary>
-		static void CreateBilinearSurface(const XYZ& point1, const XYZ& point2, const XYZ& point3, const XYZ& point4, LN_NurbsSurface& surface);
+		static void CreateBilinearSurface(const XYZ& topLeftPoint, const XYZ& topRightPoint, const XYZ& bottomLeftPoint, const XYZ& bottomRightPoint, LN_NurbsSurface& surface);
 
 		/// <summary>
 		/// The NURBS Book 2nd Edition Page336
@@ -151,12 +161,12 @@ namespace LNLib
 		/// The NURBS Book 2nd Edition Page348
 		/// Nonuniform scaling of surface.
 		/// </summary>
-		static std::vector<std::vector<XYZW>> NonuniformScaling(const std::vector<std::vector<XYZW>>& controlPoints, double xFactor, double yFactor, double zFactor, const XYZ& referencePoint);
+		static std::vector<std::vector<XYZW>> NonUniformScaling(const std::vector<std::vector<XYZW>>& controlPoints, double xFactor, double yFactor, double zFactor, const XYZ& referencePoint);
 
 		/// <summary>
 		/// The NURBS Book 2nd Edition Page359
 		/// Algorithm A8.2
-		/// Create Nurbs corner fillet surface.
+		/// Create NURBS corner fillet surface.
 		/// 
 		/// Curve1,2,3 are three boundary arcs and could arbitrarily positioned and oriented in space but joined at their endpoints. 
 		/// The parameter 'arc' represents curve2;
@@ -186,33 +196,48 @@ namespace LNLib
 
 		/// <summary>
 		/// The NURBS Book 2nd Edition Page456
-		/// Algorithm A10.1
-		/// Create Swung Surface.
-		/// The profile curve lie on the xz-plane and trajectory curve  along its y-axis.
+		/// Create swung surface.
+		/// The profile curve lie on the xz-plane and trajectory curve along its y-axis.
 		/// </summary>
 		static bool CreateSwungSurface(const LN_NurbsCurve& profile, const LN_NurbsCurve& trajectory, double scale, LN_NurbsSurface& surface);
 
 		/// <summary>
 		/// The NURBS Book 2nd Edition Page457
-		/// Create Loft Surface (called Skinned Surfaces in The NURBS Book).
+		/// Create loft surface (called Skinned Surface in The NURBS Book).
 		/// </summary>
-		static void CreateLoftSurface(const std::vector<LN_NurbsCurve>& sections, LN_NurbsSurface& surface);
+		static void CreateLoftSurface(const std::vector<LN_NurbsCurve>& sections, LN_NurbsSurface& surface, 
+										int customTrajectoryDegree = 0, const std::vector<double>& customTrajectoryKnotVector = {});
 
 		/// <summary>
 		/// The NURBS Book 2nd Edition Page472
-		/// Algorithm A10.2
-		/// Create Sweep Surface.
+		/// Create generalized translational sweep surface.
 		/// </summary>
-		static void CreateSweepSurface(const LN_NurbsCurve& path, const std::vector<LN_NurbsCurve>& profiles, LN_NurbsSurface& surface);
+		static void CreateGeneralizedTranslationalSweepSurface(const LN_NurbsCurve& profile, const LN_NurbsCurve& trajectory, LN_NurbsSurface& surface);
+
+		/// <summary>
+		/// The NURBS Book 2nd Edition Page475
+		/// Algorithm A10.1
+		/// Create sweep surface by trajectory interpolated.
+		/// Profile must lie on XOY plane.
+		/// </summary>
+		static void CreateSweepSurface(const LN_NurbsCurve& profile, const LN_NurbsCurve& trajectory, int minimumProfiles, LN_NurbsSurface& surface);
+
+		/// <summary>
+		/// The NURBS Book 2nd Edition Page477
+		/// Algorithm A10.2
+		/// Create sweep surface by trajectory not interpolated.
+		/// Profile must lie on XOY plane.
+		/// </summary>
+		static void CreateSweepSurface(const LN_NurbsCurve& profile, const LN_NurbsCurve& trajectory, int minimumProfiles, int customTrajectoryDegree, LN_NurbsSurface& surface);
 
 		/// <summary>
 		/// The NURBS Book 2nd Edition Page494
 		/// Algorithm A10.3
-		/// Create Gordon Surface.
-		/// Gordon Surface has a number of restrictions:
+		/// Create Gordon surface.
+		/// Gordon surface has a number of restrictions:
 		/// 1. All input curves must be NURBS or NURBS-like. Only non-rational curves are supported - i.e., without weights (or all weights equal).
-		/// 2. All U-curves must have “the same” direction; all V-curves must also have “the same” direction.
-		/// 3. There must be N curves along one direction, and M curves along another direction, which must exactly intersect at N x M points.
+		/// 2. All U-curves must be have “the same” direction; all V-curves must be also have “the same” direction.
+		/// 3. There must be N curves along one direction, and M curves along another direction, which must be exactly intersect at N x M points.
 		/// 4. Intersection points must be located evenly in parameter spaces of curves. 
 		/// 5. U-curves must be ordered along direction of V-curves, and vice versa. 
 		/// </summary>
@@ -221,28 +246,23 @@ namespace LNLib
 		/// <summary>
 		/// The NURBS Book 2nd Edition Page502
 		/// Algorithm A10.4
-		/// Create Coons Surface.
-		/// The difference between Coons and Gordon is that Coons Surface is created by 4 curves.
-		/// The coons surface is the special case of Gordon Surface.
-		/// 
-		/// curve0 & curve2 are one side and curve1 & curve3 are another side.
-		/// curve0,curve1,curve2,curve3 are anti-clock connected.
-		/// 
+		/// Create Coons surface.
+		/// The difference between Coons and Gordon is that Coons surface is created by 4 anti-clock curves.
+		/// The Coons surface is the special case of Gordon Surface.
 		/// </summary>
-		static void CreateCoonsSurface(const LN_NurbsCurve& curve0, const LN_NurbsCurve& curve1, const LN_NurbsCurve& curve2, const LN_NurbsCurve& curve3, LN_NurbsSurface& surface);
+		static void CreateCoonsSurface(const LN_NurbsCurve& leftCurve, const LN_NurbsCurve& bottomCurve, const LN_NurbsCurve& rightCurve, const LN_NurbsCurve& topCurve, LN_NurbsSurface& surface);
 
 		/// <summary>
 		/// Calculate surface area.
-		/// 
-		/// Use Simpson integration for low accuracy.
-		/// Use Gauss-Legendre integration for medium accuracy.
-		/// Use Chebyshev integration for high accuracy.
 		/// </summary>
-		static double ApproximateArea(const LN_NurbsSurface& surface, IntegratorType type = IntegratorType::Chebyshev);
+		static double ApproximateArea(const LN_NurbsSurface& surface, IntegratorType type = IntegratorType::GaussLegendre);
 
 		/// <summary>
-		/// Tessellate nurbs surface.
+		/// Triangulate nurbs surface.
+		/// According to https://github.com/nortikin/sverchok/blob/master/utils/adaptive_surface.py
 		/// </summary>
-		static LN_Mesh Tessellate(const LN_NurbsSurface& surface);
+		static LN_Mesh Triangulate(const LN_NurbsSurface& surface);
 	};
+
+	
 }

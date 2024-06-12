@@ -71,6 +71,7 @@ void Test_TessllateCurve()
 	renderer->SetBackground(0, 0, 0);
 
 	vtkNew<vtkRenderWindow> renWin;
+	renWin->SetWindowName("Tessellate Curve");
 	renWin->AddRenderer(renderer);
 	renWin->SetSize(500, 500);
 
