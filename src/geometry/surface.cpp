@@ -16,6 +16,8 @@
 #include "Constants.h"
 #include "NurbsSurface.h"
 
+#include "customIteractorStyle.h"
+
 #include <vtkNew.h>
 #include <vtkAssembly.h>
 #include <vtkAssemblyPath.h>
@@ -185,89 +187,31 @@ void Test_TessllateSurface()
 
 	// Visualize
 	vtkSmartPointer<vtkRenderer> renderer = vtkSmartPointer<vtkRenderer>::New();
+	renderer->AddActor(actor);
 	vtkSmartPointer<vtkRenderWindow> renderWindow =	vtkSmartPointer<vtkRenderWindow>::New();
 	renderWindow->SetWindowName("Tessellate Surface");
-	renderWindow->AddRenderer(renderer);
-	vtkSmartPointer<vtkRenderWindowInteractor> renderWindowInteractor = vtkSmartPointer<vtkRenderWindowInteractor>::New();
-	renderWindowInteractor->SetRenderWindow(renderWindow);
-	renderer->AddActor(actor);
+	
+	vtkNew<vtkAxesActor> axesActor;
+	vtkNew<vtkTransform>  userTrans;
+	userTrans->Update();
+	axesActor->SetUserTransform(userTrans);
+	axesActor->AxisLabelsOn();
+	axesActor->SetTotalLength(100, 100, 100);
+
+	renderer->AddActor(axesActor);
 	renderer->SetBackground(0, 0, 0);
 
-	// vtkAxesActor is currently not designed to work with
-	// vtkInteractorStyleTrackballActor since it is a hybrid object containing
-	// both vtkProp3D's and vtkActor2D's, the latter of which does not have a 3D
-	// position that can be manipulated.
-	vtkNew<vtkAxesActor> axes;
+	vtkNew<vtkRenderWindowInteractor> renderWindowInteractor;
+	renderWindowInteractor->SetRenderWindow(renderWindow);
 
-	// Get a copy of the axes' constituent 3D actors and put them into a
-	// vtkAssembly so they can be manipulated as one prop.
-	vtkNew<vtkPropCollection> collection;
-	axes->GetActors(collection);
+	vtkNew<customIteractorStyle> style;
+	style->SetFixedAxesActor(axesActor);
+	renderWindowInteractor->SetInteractorStyle(style);
 
-	collection->InitTraversal();
-
-	vtkNew<vtkAssembly> movableAxes;
-
-	for (int i = 0; i < collection->GetNumberOfItems(); ++i)
-	{
-		movableAxes->AddPart((vtkProp3D*)collection->GetNextProp());
-	}
-
-	renderer->AddActor(movableAxes);
-
-	// Create our own labels that will follow and face the camera.
-	vtkNew<vtkFollower> xLabel;
-	vtkNew<vtkVectorText> xText;
-	vtkNew<vtkPolyDataMapper> xTextMapper;
-	xText->SetText("X");
-	xTextMapper->SetInputConnection(xText->GetOutputPort());
-	xLabel->SetMapper(xTextMapper);
-	xLabel->SetScale(0.3);
-	xLabel->SetCamera(renderer->GetActiveCamera());
-	xLabel->SetPosition(
-		((vtkProp3D*)collection->GetItemAsObject(3))->GetCenter()); // XAxisTip
-	xLabel->PickableOff();
-	renderer->AddActor(xLabel);
-
-	vtkNew<vtkFollower> yLabel;
-	vtkNew<vtkVectorText> yText;
-	vtkNew<vtkPolyDataMapper> yTextMapper;
-	yText->SetText("Y");
-	yTextMapper->SetInputConnection(yText->GetOutputPort());
-	yLabel->SetMapper(yTextMapper);
-	yLabel->SetScale(0.3);
-	yLabel->SetCamera(renderer->GetActiveCamera());
-	yLabel->SetPosition(
-		((vtkProp3D*)collection->GetItemAsObject(4))->GetCenter()); // YAxisTip
-	yLabel->PickableOff();
-	renderer->AddActor(yLabel);
-
-	vtkNew<vtkFollower> zLabel;
-	vtkNew<vtkVectorText> zText;
-	vtkNew<vtkPolyDataMapper> zTextMapper;
-	zText->SetText("Z");
-	zTextMapper->SetInputConnection(zText->GetOutputPort());
-	zLabel->SetMapper(zTextMapper);
-	zLabel->SetScale(0.3);
-	zLabel->SetCamera(renderer->GetActiveCamera());
-	zLabel->SetPosition(
-		((vtkProp3D*)collection->GetItemAsObject(5))->GetCenter()); // ZAxisTip
-	zLabel->PickableOff();
-	renderer->AddActor(zLabel);
-
-	// Custom callback to set the positions of the labels.
-	vtkNew<vtkPositionCallback> callback;
-	callback->XLabel = xLabel;
-	callback->YLabel = yLabel;
-	callback->ZLabel = zLabel;
-	callback->Axes = movableAxes;
+	renderWindow->AddRenderer(renderer);
 
 	renderer->ResetCamera();
 	renderWindow->Render();
-
-	vtkNew<vtkInteractorStyleTrackballActor> style;
-	renderWindowInteractor->SetInteractorStyle(style);
-	style->AddObserver(vtkCommand::InteractionEvent, callback);
-
 	renderWindowInteractor->Start();
+
 }
