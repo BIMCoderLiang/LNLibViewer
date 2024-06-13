@@ -40,53 +40,6 @@
 VTK_MODULE_INIT(vtkRenderingOpenGL2)
 using namespace LNLib;
 
-namespace {
-	//----------------------------------------------------------------------------
-	class vtkPositionCallback : public vtkCallbackCommand
-	{
-	public:
-		static vtkPositionCallback* New()
-		{
-			return new vtkPositionCallback;
-		}
-
-		void Execute(vtkObject* vtkNotUsed(caller), unsigned long vtkNotUsed(event),
-			void* vtkNotUsed(callData))
-		{
-			this->Axes->InitPathTraversal();
-			vtkAssemblyPath* path = 0;
-			int count = 0;
-			vtkFollower* followers[3] = { this->XLabel, this->YLabel, this->ZLabel };
-			int followerId = 0;
-			while ((path = this->Axes->GetNextPath()) != NULL)
-			{
-				if (count++ > 2)
-				{
-					vtkProp3D* prop3D =
-						static_cast<vtkProp3D*>(path->GetLastNode()->GetViewProp());
-					if (prop3D)
-					{
-						prop3D->PokeMatrix(path->GetLastNode()->GetMatrix());
-						followers[followerId]->SetPosition(prop3D->GetCenter());
-						followerId++;
-						prop3D->PokeMatrix(NULL);
-					}
-				}
-			}
-		}
-
-		vtkPositionCallback() : XLabel(0), YLabel(0), ZLabel(0), Axes(0)
-		{
-		}
-
-		vtkFollower* XLabel;
-		vtkFollower* YLabel;
-		vtkFollower* ZLabel;
-		vtkAssembly* Axes;
-	};
-
-} // namespace
-
 void Test_TessllateSurface()
 {
 	int degreeU = 3;
