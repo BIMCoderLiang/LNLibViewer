@@ -8,4 +8,10 @@
  * the LICENSE file.
  */
 
-void Test_TessllateCurve();
+#include "NurbsCurve.h"
+#include <vtkRenderer.h>
+#include <vector>
+
+using namespace LNLib;
+
+void DisplayCurves(vtkSmartPointer<vtkRenderer> renderer, const std::vector<LN_NurbsCurve>& curves);

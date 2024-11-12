@@ -8,4 +8,10 @@
  * the LICENSE file.
  */
 
-void Test_TessllateSurface();
+#include "LNObject.h"
+#include <vtkRenderer.h>
+#include <vector>
+
+using namespace LNLib;
+
+void DisplaySurfaces(vtkSmartPointer<vtkRenderer> renderer, const std::vector<LN_NurbsSurface>& surfaces);
