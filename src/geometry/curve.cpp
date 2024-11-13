@@ -29,7 +29,6 @@ VTK_MODULE_INIT(vtkRenderingOpenGL2)
 
 void DisplayCurves(vtkSmartPointer<vtkRenderer> renderer, const std::vector<LN_NurbsCurve>& curves)
 {
-
 	std::random_device rd;
 	std::mt19937 gen(rd());
 	std::uniform_int_distribution<> distrib(50, 250);

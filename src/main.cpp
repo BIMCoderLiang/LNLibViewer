@@ -162,7 +162,9 @@ int main(int, char* [])
 	}
 
 	vtkSmartPointer<vtkRenderWindow> renderWindow = vtkSmartPointer<vtkRenderWindow>::New();
-	renderWindow->SetWindowName("Display Geometry");
+	renderWindow->SetWindowName("LNLibViewer - BIMCoder Liang (bim.frankliang@foxmail.com)");
+	renderWindow->FullScreenOn();
+	renderWindow->BordersOn();
 
 	vtkSmartPointer<vtkRenderer> renderer = vtkSmartPointer<vtkRenderer>::New();
 	DisplayCurves(renderer, curves);
@@ -174,7 +176,6 @@ int main(int, char* [])
 	axesActor->SetUserTransform(userTrans);
 	axesActor->AxisLabelsOn();
 	axesActor->SetTotalLength(100, 100, 100);
-
 	renderer->AddActor(axesActor);
 	renderer->SetBackground(0, 0, 0);
 

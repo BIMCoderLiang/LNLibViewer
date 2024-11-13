@@ -13,18 +13,6 @@
 VTK_MODULE_INIT(vtkInteractionStyle)
 VTK_MODULE_INIT(vtkRenderingVolumeOpenGL2);
 
-void customIteractorStyle::OnMouseWheelForward()
-{
-    ScaleAxes(m_ScaleFator[0]);
-    vtkInteractorStyleTrackballCamera::OnMouseWheelForward();
-}
-
-void customIteractorStyle::OnMouseWheelBackward()
-{
-    ScaleAxes(m_ScaleFator[1]);
-    vtkInteractorStyleTrackballCamera::OnMouseWheelBackward();
-}
-
 void customIteractorStyle::SetFixedAxesActor(vtkAxesActor* actor)
 {
     if (this->m_axesActor != actor)
@@ -58,7 +46,6 @@ void customIteractorStyle::ScaleAxes(double factor)
     vtkNew<vtkTransform> scaleTrans;
     scaleTrans->Scale(factor, factor, factor);
     scaleTrans->Update();
-
 
     vtkNew<vtkTransform> trans;
     trans->Concatenate(m_axesActor->GetUserTransform());

@@ -32,7 +32,6 @@ void DisplaySurfaces(vtkSmartPointer<vtkRenderer> renderer, const std::vector<LN
 	std::mt19937 gen(rd());
 	std::uniform_int_distribution<> distrib(50, 250);
 
-	
 	for (int i = 0; i < surfaces.size(); i++)
 	{
 		LNLib::LN_NurbsSurface surface = surfaces[i];
@@ -80,7 +79,4 @@ void DisplaySurfaces(vtkSmartPointer<vtkRenderer> renderer, const std::vector<LN
 
 		renderer->AddActor(actor);
 	}
-
-	
-
 }

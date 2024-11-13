@@ -22,8 +22,6 @@ class customIteractorStyle : public vtkInteractorStyleTrackballCamera
 {
 public:
     static customIteractorStyle* New() { return new customIteractorStyle(); }
-    void OnMouseWheelForward() override;
-    void OnMouseWheelBackward() override;
     void SetFixedAxesActor(vtkAxesActor* actor);
 
 protected:
