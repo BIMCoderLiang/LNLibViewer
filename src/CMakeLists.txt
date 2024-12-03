@@ -12,8 +12,6 @@ target_include_directories(${TARGET_NAME} PUBLIC
 
 file(GLOB VTK_LIB_FILES ${VTK_DIR}/lib/*.lib)
 list(APPEND LIBS ${VTK_LIB_FILES})
-#file(GLOB LN_LIB_FILES ${LNLib_DIR}/lib/Release/*.lib)
-#list(APPEND LIBS ${LN_LIB_FILES})
 
 target_link_libraries(${TARGET_NAME} ${LIBS} ${LNLib_DIR}/lib/$<CONFIG>/LNLib.lib)
 
