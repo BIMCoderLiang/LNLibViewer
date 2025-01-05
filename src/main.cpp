@@ -10,7 +10,7 @@
 #include "curve.h"
 #include "surface.h"
 #include "XYZW.h"
-
+#include "arrow.h"
 #include "customIteractorStyle.h"
 
 #include <vtkNew.h>
@@ -169,6 +169,7 @@ int main(int, char* [])
 	vtkSmartPointer<vtkRenderer> renderer = vtkSmartPointer<vtkRenderer>::New();
 	DisplayCurves(renderer, curves);
 	DisplaySurfaces(renderer, surfaces);
+	DisplayArrow(renderer, XYZ(0, 0, 0), XYZ(1, 1, 1), 100);
 
 	vtkNew<vtkAxesActor> axesActor;
 	vtkNew<vtkTransform>  userTrans;
