@@ -2,7 +2,7 @@
  * Author:
  * 2023/06/22 - Yuqing Liang (BIMCoder Liang)
  * bim.frankliang@foxmail.com
- * 微信公众号：BIMCoder梁老师
+ * 
  *
  * Use of this source code is governed by a GPL-3.0 license that can be found in
  * the LICENSE file.
@@ -25,7 +25,7 @@ namespace LNLib
 
 		Matrix4d();
 
-		Matrix4d(XYZ basisX, XYZ basisY, XYZ basisZ, XYZ basisW);
+		Matrix4d(XYZ basisX, XYZ basisY, XYZ basisZ, XYZ origin);
 
 		Matrix4d(double a00, double a01, double a02, double a03,
 				 double a10, double a11, double a12, double a13,

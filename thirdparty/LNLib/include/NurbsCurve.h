@@ -2,7 +2,7 @@
  * Author:
  * 2023/06/08 - Yuqing Liang (BIMCoder Liang)
  * bim.frankliang@foxmail.com
- * 微信公众号：BIMCoder梁老师
+ * 
  *
  * Use of this source code is governed by a GPL-3.0 license that can be found in
  * the LICENSE file.
@@ -96,6 +96,11 @@ namespace LNLib
 		static bool RemoveKnot(const LN_NurbsCurve& curve, double removeKnot, int times, LN_NurbsCurve& result);
 
 		/// <summary>
+		/// Remove excessive knots.
+		/// </summary>
+		static void RemoveExcessiveKnots(const LN_NurbsCurve& curve, LN_NurbsCurve& result);
+
+		/// <summary>
 		/// The NURBS Book 2nd Edition Page206
 		/// Algorithm A5.9
 		/// Degree elevate a curve t times.
@@ -169,7 +174,7 @@ namespace LNLib
 		/// <summary>
 		/// Offset curve makes bigger or smaller.
 		/// </summary>
-		static void Offset(const LN_NurbsCurve& curve, double offset, LN_NurbsCurve& result);
+		static void Offset(const LN_NurbsCurve& curve, double offset, OffsetType type, LN_NurbsCurve& result);
 
 		/// <summary>
 		/// Create line represented by NURBS.

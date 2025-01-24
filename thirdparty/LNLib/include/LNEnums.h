@@ -2,7 +2,7 @@
  * Author:
  * 2024/01/13 - Yuqing Liang (BIMCoder Liang)
  * bim.frankliang@foxmail.com
- * 微信公众号：BIMCoder梁老师
+ * 
  *
  * Use of this source code is governed by a GPL-3.0 license that can be found in
  * the LICENSE file.
@@ -57,6 +57,20 @@ namespace LNLib
 		Chebyshev = 2,
 	};
 
+	enum class OffsetType :int
+	{
+		// Tiller & Hanson Algorithm for C0 profile.
+		// 
+		// 1. Tiller & Hanson Algorithm should iterative use. 
+		// When diff is larger than tolerance, should subdivide curve util less than tolerance.
+		// Finally use Merge curve.
+		// 
+		// 2. Tiller & Hanson Algorithm is not good in negative offset & hight degree curve.
+		TillerAndHanson = 0,
+
+		// Piegl & Tiller Algorithm for high degree profile.
+		PieglAndTiller = 1,
+	};
 }
 
 
