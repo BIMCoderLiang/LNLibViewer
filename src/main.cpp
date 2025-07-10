@@ -12,6 +12,7 @@
 #include "XYZW.h"
 #include "arrow.h"
 #include "point.h"
+#include "mesh.h"
 #include "customIteractorStyle.h"
 
 #include <vtkNew.h>
@@ -121,6 +122,7 @@ int main(int, char* [])
 	DisplaySurfaces(renderer, surfaces);
 	DisplayArrow(renderer, XYZ(0, 0, 0), XYZ(1, 1, 1), 100);
 	DisplayPoints(renderer, points);
+	/*DisplayMesh(renderer, mesh);*/
 
 	vtkNew<vtkAxesActor> axesActor;
 	vtkNew<vtkTransform>  userTrans;
