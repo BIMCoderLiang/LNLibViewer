@@ -8,9 +8,12 @@
  */
 
 #include <vtkRenderer.h>
+#include <vtkPolyData.h>
 #include "LNObject.h"
 
 using namespace LNLib;
 
 void DisplayMesh(vtkSmartPointer<vtkRenderer> renderer, const LNLib::LN_Mesh& mesh);
+
+vtkSmartPointer<vtkPolyData> ConvertToPolyData(const LN_Mesh& mesh);
 
