@@ -1,11 +1,11 @@
 ## Introduction
 **LNLibViewer is a 3d viewer matches C++ NURBS algorithm library LNLib** <br/>This project is construct based on [VTK](https://vtk.org/)
 
-**Curve:**
-<img src="assets/curve.png" width=400 height=400>
-**Surface:**
-<img src="assets/surface.png" width=400 height=320>
-**Mesh:**
+**Curve:**<br/>
+<img src="assets/curve.png" width=400 height=400><br/>
+**Surface:**<br/>
+<img src="assets/surface.png" width=400 height=320><br/>
+**Mesh:**<br/>
 <img src="assets/mesh.png" width=400 height=250>
 
 ## LNLib
