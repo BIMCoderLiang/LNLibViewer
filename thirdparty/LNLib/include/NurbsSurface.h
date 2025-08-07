@@ -4,7 +4,7 @@
  * bim.frankliang@foxmail.com
  * 
  *
- * Use of this source code is governed by a GPL-3.0 license that can be found in
+ * Use of this source code is governed by a LGPL-2.1 license that can be found in
  * the LICENSE file.
  */
 
@@ -70,7 +70,7 @@ namespace LNLib
 		/// Algorithm A5.5
 		/// Refine surface knot vector.
 		/// </summary>
-		static void RefineKnotVector(const LN_NurbsSurface& surface, std::vector<double>& insertKnotElements, bool isUDirection, LN_NurbsSurface& result);
+		static void RefineKnotVector(const LN_NurbsSurface& surface, const std::vector<double>& insertKnotElements, bool isUDirection, LN_NurbsSurface& result);
 
 		/// <summary>
 		/// The NURBS Book 2nd Edition Page177
@@ -117,6 +117,13 @@ namespace LNLib
 		/// Point inversion:finding the corresponding parameter make S(u,v) = P.
 		/// </summary>
 		static UV GetParamOnSurface(const LN_NurbsSurface& surface, const XYZ& givenPoint);
+
+		/// <summary>
+		/// Experimental:
+		/// According to https://jcst.ict.ac.cn/fileup/1000-9000/PDF/2019-6-9-9388.pdf
+		/// A Geometric Strategy Algorithm for Orthogonal Projection onto a Parametric Surface
+		/// </summary>
+		static UV GetParamOnSurfaceByGSA(const LN_NurbsSurface& surface, const XYZ& givenPoint);
 
 		static void Reparametrize(const LN_NurbsSurface& surface, double minU, double maxU, double minV, double maxV, LN_NurbsSurface& result);
 

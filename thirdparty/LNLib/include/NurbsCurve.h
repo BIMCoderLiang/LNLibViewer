@@ -4,7 +4,7 @@
  * bim.frankliang@foxmail.com
  * 
  *
- * Use of this source code is governed by a GPL-3.0 license that can be found in
+ * Use of this source code is governed by a LGPL-2.1 license that can be found in
  * the LICENSE file.
  */
 
@@ -79,7 +79,7 @@ namespace LNLib
 		/// Algorithm A5.4
 		/// Refine curve knot vector.
 		/// </summary>
-		static void RefineKnotVector(const LN_NurbsCurve& curve, std::vector<double>& insertKnotElements, LN_NurbsCurve& result);
+		static void RefineKnotVector(const LN_NurbsCurve& curve, const std::vector<double>& insertKnotElements, LN_NurbsCurve& result);
 
 		/// <summary>
 		/// The NURBS Book 2nd Edition Page173
