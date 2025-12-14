@@ -21,7 +21,7 @@ void DisplaySurfaces(vtkSmartPointer<vtkRenderer> renderer, const std::vector<LN
 	{
 		LNLib::LN_NurbsSurface surface = surfaces[i];
 
-		LNLib::LN_Mesh mesh = NurbsSurface::Triangulate(surface);
+		LNLib::LN_Mesh mesh = NurbsSurface::Triangulate(surface, 200,200,false);
 		DisplayMesh(renderer,mesh);
 	}
 }

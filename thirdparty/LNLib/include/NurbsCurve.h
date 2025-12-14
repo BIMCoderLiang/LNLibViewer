@@ -13,7 +13,6 @@
 #include "LNEnums.h"
 #include "LNLibDefinitions.h"
 #include "LNObject.h"
-#include "LNEnums.h"
 #include <vector>
 
 namespace LNLib
@@ -47,7 +46,7 @@ namespace LNLib
 		/// <summary>
 		/// Computer left and right hand derivatives.
 		/// </summary>
-		static bool CanComputerDerivative(const LN_NurbsCurve& curve, double paramT);
+		static bool CanComputeDerivative(const LN_NurbsCurve& curve, double paramT);
 
 		/// <summary>
 		/// Calculate curve curvature.
@@ -236,6 +235,9 @@ namespace LNLib
 		/// <summary>
 		/// The NURBS Book 2nd Edition Page410
 		/// Least square curve approximation.
+		/// 
+		/// Referenced from https://github.com/iTwin/imodel-native (Bentley Software): 
+		///		MSBsplineCurve::GeneralLeastSquaresApproximation.
 		/// </summary>
 		static bool LeastSquaresApproximation(int degree, const std::vector<XYZ>& throughPoints, int controlPointsCount, LN_NurbsCurve& curve);
 
