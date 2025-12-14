@@ -58,12 +58,13 @@ void DisplayCurves(vtkSmartPointer<vtkRenderer> renderer, const std::vector<LN_N
 		geometryMapper->ScalarVisibilityOff();
 		vtkNew<vtkActor> geometryActor;
 
-		double r = distrib(gen) / 255.0;
-		double g = distrib(gen) / 255.0;
-		double b = distrib(gen) / 255.0;
+		//random color
+		//double r = distrib(gen) / 255.0;
+		//double g = distrib(gen) / 255.0;
+		//double b = distrib(gen) / 255.0;
 
-		geometryActor->GetProperty()->SetColor(r, g, b);
-		geometryActor->GetProperty()->SetLineWidth(3);
+		geometryActor->GetProperty()->SetColor(0.9, 0.75, 0.0);
+		geometryActor->GetProperty()->SetLineWidth(5);
 		geometryActor->SetMapper(geometryMapper);
 
 		renderer->AddActor(geometryActor);
