@@ -1,4 +1,4 @@
-/*
+﻿/*
  * Author:
  * 2025/07/10 - Yuqing Liang (BIMCoder Liang)
  * bim.frankliang@foxmail.com
@@ -26,6 +26,7 @@
 #include <vtkTriangleFilter.h>
 
 #include <random>
+#include <vtkFeatureEdges.h>
 using namespace LNLib;
 
 vtkSmartPointer<vtkPolyData> ConvertToPolyData(const LN_Mesh& mesh) {
@@ -100,24 +101,40 @@ vtkSmartPointer<vtkPolyData> ConvertToPolyData(const LN_Mesh& mesh) {
 
 void DisplayMesh(vtkSmartPointer<vtkRenderer> renderer, const LNLib::LN_Mesh& mesh)
 {
-    std::random_device rd;
-    std::mt19937 gen(rd());
-    std::uniform_int_distribution<> distrib(50, 250);
 
-    // Create a PolyData
     vtkSmartPointer<vtkPolyData> polygonPolyData = ConvertToPolyData(mesh);
 
-    // Create a mapper and actor
-    vtkSmartPointer<vtkPolyDataMapper> mapper = vtkSmartPointer<vtkPolyDataMapper>::New();
-    mapper->SetInputData(polygonPolyData);
-    mapper->SetScalarVisibility(false);
 
-    vtkSmartPointer<vtkActor> actor = vtkSmartPointer<vtkActor>::New();
-    actor->SetMapper(mapper);
-    double r = distrib(gen) / 255.0;
-    double g = distrib(gen) / 255.0;
-    double b = distrib(gen) / 255.0;
-    actor->GetProperty()->SetColor(r, g, b);
-    mapper->SetScalarVisibility(false);
-    renderer->AddActor(actor);
+    vtkSmartPointer<vtkPolyDataMapper> fillMapper = vtkSmartPointer<vtkPolyDataMapper>::New();
+    fillMapper->SetInputData(polygonPolyData);
+    fillMapper->SetScalarVisibility(false);
+
+    vtkSmartPointer<vtkActor> fillActor = vtkSmartPointer<vtkActor>::New();
+    fillActor->SetMapper(fillMapper);
+
+    fillActor->GetProperty()->SetColor(0.9, 0.75, 0.0); 
+    fillActor->GetProperty()->SetSpecular(0.4);
+    fillActor->GetProperty()->SetSpecularPower(80.0);
+    fillActor->GetProperty()->SetAmbient(0.3);
+    fillActor->GetProperty()->SetDiffuse(0.6);
+    fillActor->GetProperty()->SetOpacity(1.0);
+
+    renderer->AddActor(fillActor);
+    vtkSmartPointer<vtkFeatureEdges> featureEdges = vtkSmartPointer<vtkFeatureEdges>::New();
+    featureEdges->SetInputData(polygonPolyData);
+    featureEdges->BoundaryEdgesOn();
+    featureEdges->FeatureEdgesOff();
+    featureEdges->ManifoldEdgesOff();
+    featureEdges->NonManifoldEdgesOff();
+    featureEdges->ColoringOff();
+    featureEdges->Update();
+
+    vtkSmartPointer<vtkPolyDataMapper> edgeMapper = vtkSmartPointer<vtkPolyDataMapper>::New();
+    edgeMapper->SetInputConnection(featureEdges->GetOutputPort());
+    vtkSmartPointer<vtkActor> edgeActor = vtkSmartPointer<vtkActor>::New();
+    edgeActor->SetMapper(edgeMapper);
+    edgeActor->GetProperty()->SetColor(0.0, 0.0, 0.0);
+    edgeActor->GetProperty()->SetLineWidth(1.5);
+    edgeActor->GetProperty()->SetLighting(false);
+    renderer->AddActor(edgeActor);
 }

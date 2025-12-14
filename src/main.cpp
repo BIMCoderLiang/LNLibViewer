@@ -23,6 +23,7 @@
 #include <vtkInteractorStyleTrackballActor.h>
 #include <vtkRenderWindow.h>
 #include <vtkRenderWindowInteractor.h>
+#include <vtkLight.h>
 #include <vtkAutoInit.h>
 
 VTK_MODULE_INIT(vtkRenderingOpenGL2)
@@ -124,6 +125,18 @@ int main(int, char* [])
 	DisplayPoints(renderer, points);
 	/*DisplayMesh(renderer, mesh);*/
 
+	vtkNew<vtkLight> light;
+	light->SetLightTypeToSceneLight();
+	light->SetPosition(1000, 1000, 1000);
+	light->SetFocalPoint(0, 0, 0);
+	light->SetIntensity(1.5);
+	light->SetColor(1.0, 1.0, 1.0);
+	renderer->AddLight(light);
+
+	renderer->SetUseShadows(false);
+	renderer->SetTwoSidedLighting(true);
+	renderer->SetAmbient(0.2, 0.2, 0.2);
+
 	vtkNew<vtkAxesActor> axesActor;
 	vtkNew<vtkTransform>  userTrans;
 	userTrans->Update();
@@ -131,7 +144,10 @@ int main(int, char* [])
 	axesActor->AxisLabelsOn();
 	axesActor->SetTotalLength(100, 100, 100);
 	renderer->AddActor(axesActor);
+
+	renderer->GradientBackgroundOn();
 	renderer->SetBackground(0, 0, 0);
+	renderer->SetBackground2(0.9, 0.9, 0.9);
 
 	vtkNew<vtkRenderWindowInteractor> renderWindowInteractor;
 	renderWindowInteractor->SetRenderWindow(renderWindow);
