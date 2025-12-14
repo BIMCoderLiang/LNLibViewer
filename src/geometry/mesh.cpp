@@ -24,8 +24,6 @@
 #include <vtkPointData.h>
 #include <vtkProperty.h>
 #include <vtkTriangleFilter.h>
-
-#include <random>
 #include <vtkFeatureEdges.h>
 using namespace LNLib;
 
@@ -101,9 +99,7 @@ vtkSmartPointer<vtkPolyData> ConvertToPolyData(const LN_Mesh& mesh) {
 
 void DisplayMesh(vtkSmartPointer<vtkRenderer> renderer, const LNLib::LN_Mesh& mesh)
 {
-
     vtkSmartPointer<vtkPolyData> polygonPolyData = ConvertToPolyData(mesh);
-
 
     vtkSmartPointer<vtkPolyDataMapper> fillMapper = vtkSmartPointer<vtkPolyDataMapper>::New();
     fillMapper->SetInputData(polygonPolyData);
