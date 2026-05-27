@@ -20,7 +20,7 @@ namespace LNLib
 	template <typename T>
 	struct LN_BezierCurve
 	{
-		int Degree;
+		int Degree = 1;
 		std::vector<T> ControlPoints;
 	};
 
@@ -35,7 +35,7 @@ namespace LNLib
 	template <typename T>
 	struct LN_BsplineCurve
 	{
-		int Degree;
+		int Degree = 1;
 		std::vector<double> KnotVector;
 		std::vector<T> ControlPoints;
 	};
@@ -54,6 +54,22 @@ namespace LNLib
 
 	typedef LN_BsplineSurface<XYZW> LNLIB_EXPORT LN_NurbsSurface;
 
+	template <typename T>
+	struct LN_BsplineVolume
+	{
+		int DegreeU;
+		int DegreeV;
+		int DegreeW;
+
+		std::vector<double> KnotVectorU;
+		std::vector<double> KnotVectorV;
+		std::vector<double> KnotVectorW;
+
+		std::vector<std::vector<std::vector<T>>> ControlPoints;
+	};
+
+	typedef LN_BsplineVolume<XYZW> LNLIB_EXPORT LN_NurbsVolume;
+
 	struct LNLIB_EXPORT LN_Mesh
 	{
 		std::vector<XYZ> Vertices;
@@ -66,7 +82,7 @@ namespace LNLib
 
 	struct LNLIB_EXPORT LN_ArcInfo
 	{
-		double Radius;
+		double Radius = 0.0;
 		XYZ Center;
 	};
 }

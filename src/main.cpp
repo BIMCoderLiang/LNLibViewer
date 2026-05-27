@@ -9,6 +9,7 @@
 
 #include "curve.h"
 #include "surface.h"
+#include "volume.h"
 #include "XYZW.h"
 #include "arrow.h"
 #include "point.h"
@@ -113,6 +114,64 @@ int main(int, char* [])
 	
 	};
 
+	std::vector<LN_NurbsVolume> volumes;
+	{
+		LN_NurbsVolume volume;
+
+		volume.DegreeU = 3;
+		volume.DegreeV = 1;
+		volume.DegreeW = 1;
+
+		volume.KnotVectorU = { 0.0, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0, 1.0 };
+		volume.KnotVectorV = { 0.0, 0.0, 1.0, 1.0 };
+		volume.KnotVectorW = { 0.0, 0.0, 1.0, 1.0 };
+
+		volume.ControlPoints.resize(4);
+		for (int i = 0; i < 4; ++i) {
+			volume.ControlPoints[i].resize(2);
+			for (int j = 0; j < 2; ++j) {
+				volume.ControlPoints[i][j].resize(2);
+			}
+		}
+
+		double w_mid = std::sqrt(2.0) / 2.0;
+		w_mid = std::sqrt(3.0) / 2.0;
+
+		double tan_15 = 2.0 - std::sqrt(3.0);
+
+		double R_out = 10.0;
+
+		double out_x1 = R_out;                 double out_y1 = R_out * tan_15;
+		double out_x2 = R_out * tan_15;        double out_y2 = R_out;
+
+		double R_in = 6.0;
+		double in_x1 = R_in;                   double in_y1 = R_in * tan_15;
+		double in_x2 = R_in * tan_15;          double in_y2 = R_in;
+
+		volume.ControlPoints[0][0][0] = XYZW(R_out * 1.0, 0.0, 0.0, 1.0);
+		volume.ControlPoints[1][0][0] = XYZW(out_x1 * w_mid, out_y1 * w_mid, 0.0, w_mid);
+		volume.ControlPoints[2][0][0] = XYZW(out_x2 * w_mid, out_y2 * w_mid, 0.0, w_mid);
+		volume.ControlPoints[3][0][0] = XYZW(0.0, R_out * 1.0, 0.0, 1.0);
+
+		double Z_top = 5.0;
+		volume.ControlPoints[0][1][0] = XYZW(R_out * 1.0, 0.0, Z_top * 1.0, 1.0);
+		volume.ControlPoints[1][1][0] = XYZW(out_x1 * w_mid, out_y1 * w_mid, Z_top * w_mid, w_mid);
+		volume.ControlPoints[2][1][0] = XYZW(out_x2 * w_mid, out_y2 * w_mid, Z_top * w_mid, w_mid);
+		volume.ControlPoints[3][1][0] = XYZW(0.0, R_out * 1.0, Z_top * 1.0, 1.0);
+
+		volume.ControlPoints[0][0][1] = XYZW(R_in * 1.0, 0.0, 0.0, 1.0);
+		volume.ControlPoints[1][0][1] = XYZW(in_x1 * w_mid, in_y1 * w_mid, 0.0, w_mid);
+		volume.ControlPoints[2][0][1] = XYZW(in_x2 * w_mid, in_y2 * w_mid, 0.0, w_mid);
+		volume.ControlPoints[3][0][1] = XYZW(0.0, R_in * 1.0, 0.0, 1.0);
+
+		volume.ControlPoints[0][1][1] = XYZW(R_in * 1.0, 0.0, Z_top * 1.0, 1.0);
+		volume.ControlPoints[1][1][1] = XYZW(in_x1 * w_mid, in_y1 * w_mid, Z_top * w_mid, w_mid);
+		volume.ControlPoints[2][1][1] = XYZW(in_x2 * w_mid, in_y2 * w_mid, Z_top * w_mid, w_mid);
+		volume.ControlPoints[3][1][1] = XYZW(0.0, R_in * 1.0, Z_top * 1.0, 1.0);
+
+		volumes.emplace_back(volume);
+	}
+
 	vtkSmartPointer<vtkRenderWindow> renderWindow = vtkSmartPointer<vtkRenderWindow>::New();
 	renderWindow->SetWindowName("LNLibViewer - BIMCoder Liang (bim.frankliang@foxmail.com)");
 	renderWindow->FullScreenOn();
@@ -123,6 +182,7 @@ int main(int, char* [])
 	DisplaySurfaces(renderer, surfaces);
 	DisplayArrow(renderer, XYZ(0, 0, 0), XYZ(1, 1, 1), 100);
 	DisplayPoints(renderer, points);
+	DisplayVolumes(renderer, volumes);
 	/*DisplayMesh(renderer, mesh);*/
 
 	vtkNew<vtkLight> light;
