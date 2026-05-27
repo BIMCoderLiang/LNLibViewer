@@ -5,6 +5,8 @@
 <img src="assets/curve.png" width=400 height=400><br/>
 **Surface:**<br/>
 <img src="assets/surface.png" width=400 height=320><br/>
+**Volume (IsoCurves):**<br/>
+<img src="assets/volume.png" width=400 height=320><br/>
 **Mesh:**<br/>
 <img src="assets/mesh.png" width=400 height=250>
 
