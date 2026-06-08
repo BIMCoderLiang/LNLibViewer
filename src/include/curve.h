@@ -13,4 +13,4 @@
 
 using namespace LNLib;
 
-void DisplayCurves(vtkSmartPointer<vtkRenderer> renderer, const std::vector<LN_NurbsCurve>& curves);
+void DisplayCurves(vtkSmartPointer<vtkRenderer> renderer, const std::vector<LN_NurbsCurve>& curves, double r, double g, double b);

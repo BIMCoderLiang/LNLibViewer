@@ -97,7 +97,7 @@ vtkSmartPointer<vtkPolyData> ConvertToPolyData(const LN_Mesh& mesh) {
     return triangleFilter->GetOutput();
 }
 
-void DisplayMesh(vtkSmartPointer<vtkRenderer> renderer, const LNLib::LN_Mesh& mesh)
+void DisplayMesh(vtkSmartPointer<vtkRenderer> renderer, const LNLib::LN_Mesh& mesh, double r, double g, double b)
 {
     vtkSmartPointer<vtkPolyData> polygonPolyData = ConvertToPolyData(mesh);
 
@@ -108,7 +108,7 @@ void DisplayMesh(vtkSmartPointer<vtkRenderer> renderer, const LNLib::LN_Mesh& me
     vtkSmartPointer<vtkActor> fillActor = vtkSmartPointer<vtkActor>::New();
     fillActor->SetMapper(fillMapper);
 
-    fillActor->GetProperty()->SetColor(0.9, 0.75, 0.0); 
+    fillActor->GetProperty()->SetColor(r, g, b); 
     fillActor->GetProperty()->SetSpecular(0.4);
     fillActor->GetProperty()->SetSpecularPower(80.0);
     fillActor->GetProperty()->SetAmbient(0.3);

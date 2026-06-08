@@ -13,7 +13,7 @@
 
 using namespace LNLib;
 
-void DisplayMesh(vtkSmartPointer<vtkRenderer> renderer, const LNLib::LN_Mesh& mesh);
+void DisplayMesh(vtkSmartPointer<vtkRenderer> renderer, const LNLib::LN_Mesh& mesh, double r, double g, double b);
 
 vtkSmartPointer<vtkPolyData> ConvertToPolyData(const LN_Mesh& mesh);
 

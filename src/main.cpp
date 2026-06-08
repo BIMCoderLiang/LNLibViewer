@@ -178,12 +178,13 @@ int main(int, char* [])
 	renderWindow->BordersOn();
 
 	vtkSmartPointer<vtkRenderer> renderer = vtkSmartPointer<vtkRenderer>::New();
-	DisplayCurves(renderer, curves);
-	DisplaySurfaces(renderer, surfaces);
+	double r = 0.9, g = 0.75, b = 0;
+	DisplayCurves(renderer, curves, r, g, b);
+	DisplaySurfaces(renderer, surfaces, r, g, b);
 	DisplayArrow(renderer, XYZ(0, 0, 0), XYZ(1, 1, 1), 100);
 	DisplayPoints(renderer, points);
-	DisplayVolumes(renderer, volumes);
-	/*DisplayMesh(renderer, mesh);*/
+	DisplayVolumes(renderer, volumes, r, g, b);
+	/*DisplayMesh(renderer, mesh, r, g, b);*/
 
 	vtkNew<vtkLight> light;
 	light->SetLightTypeToSceneLight();

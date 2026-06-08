@@ -15,13 +15,13 @@
 
 using namespace LNLib;
 
-void DisplaySurfaces(vtkSmartPointer<vtkRenderer> renderer, const std::vector<LN_NurbsSurface>& surfaces)
+void DisplaySurfaces(vtkSmartPointer<vtkRenderer> renderer, const std::vector<LN_NurbsSurface>& surfaces, double r, double g, double b)
 {
 	for (int i = 0; i < surfaces.size(); i++)
 	{
 		LNLib::LN_NurbsSurface surface = surfaces[i];
 
 		LNLib::LN_Mesh mesh = NurbsSurface::Triangulate(surface, 200,200,false);
-		DisplayMesh(renderer,mesh);
+		DisplayMesh(renderer,mesh, r, g, b);
 	}
 }

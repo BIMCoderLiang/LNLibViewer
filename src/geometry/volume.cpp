@@ -16,7 +16,7 @@
 
 using namespace LNLib;
 
-void DisplayVolumes(vtkSmartPointer<vtkRenderer> renderer, const std::vector<LN_NurbsVolume>& volumes)
+void DisplayVolumes(vtkSmartPointer<vtkRenderer> renderer, const std::vector<LN_NurbsVolume>& volumes, double r, double g, double b)
 {
 	
 	for (int i = 0; i < volumes.size(); i++)
@@ -68,6 +68,6 @@ void DisplayVolumes(vtkSmartPointer<vtkRenderer> renderer, const std::vector<LN_
 			}
 		}
 
-		DisplayCurves(renderer, curves);
+		DisplayCurves(renderer, curves, r, g, b);
 	}
 }

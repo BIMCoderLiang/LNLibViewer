@@ -13,4 +13,4 @@
 
 using namespace LNLib;
 
-void DisplaySurfaces(vtkSmartPointer<vtkRenderer> renderer, const std::vector<LN_NurbsSurface>& surfaces);
+void DisplaySurfaces(vtkSmartPointer<vtkRenderer> renderer, const std::vector<LN_NurbsSurface>& surfaces, double r, double g, double b);

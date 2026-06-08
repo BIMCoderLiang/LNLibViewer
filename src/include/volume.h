@@ -13,4 +13,4 @@
 
 using namespace LNLib;
 
-void DisplayVolumes(vtkSmartPointer<vtkRenderer> renderer, const std::vector<LN_NurbsVolume>& volumes);
+void DisplayVolumes(vtkSmartPointer<vtkRenderer> renderer, const std::vector<LN_NurbsVolume>& volumes, double r, double g, double b);

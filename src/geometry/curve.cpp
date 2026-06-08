@@ -27,7 +27,7 @@
 #include <random>
 VTK_MODULE_INIT(vtkRenderingOpenGL2)
 
-void DisplayCurves(vtkSmartPointer<vtkRenderer> renderer, const std::vector<LN_NurbsCurve>& curves)
+void DisplayCurves(vtkSmartPointer<vtkRenderer> renderer, const std::vector<LN_NurbsCurve>& curves, double r, double g, double b)
 {
 	std::random_device rd;
 	std::mt19937 gen(rd());
@@ -63,7 +63,7 @@ void DisplayCurves(vtkSmartPointer<vtkRenderer> renderer, const std::vector<LN_N
 		//double g = distrib(gen) / 255.0;
 		//double b = distrib(gen) / 255.0;
 
-		geometryActor->GetProperty()->SetColor(0.9, 0.75, 0.0);
+		geometryActor->GetProperty()->SetColor(r, g, b);
 		geometryActor->GetProperty()->SetLineWidth(5);
 		geometryActor->SetMapper(geometryMapper);
 
